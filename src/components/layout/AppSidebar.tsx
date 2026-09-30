@@ -53,7 +53,6 @@ interface AppSidebarProps {
   onOpenDuplicateInspector: () => void;
   onOpenIndiaHierarchy: () => void;
   onOpenCrisisSimulation: () => void;
-  onOpenJudgesGuide: () => void;
   // Stats
   hotspotsCount?: number;
   criticalAlertsCount?: number;
@@ -78,7 +77,6 @@ export const AppSidebar: React.FC<AppSidebarProps> = ({
   onOpenDuplicateInspector,
   onOpenIndiaHierarchy,
   onOpenCrisisSimulation,
-  onOpenJudgesGuide,
   hotspotsCount = 8,
   criticalAlertsCount = 4
 }) => {
@@ -188,12 +186,6 @@ export const AppSidebar: React.FC<AppSidebarProps> = ({
       icon: Activity,
       action: onOpenCrisisSimulation,
       color: 'text-rose-600 bg-rose-50 hover:bg-rose-100'
-    },
-    {
-      name: 'Judges Demo Guide',
-      icon: Sparkles,
-      action: onOpenJudgesGuide,
-      color: 'text-indigo-600 bg-indigo-50 hover:bg-indigo-100'
     },
   ];
 

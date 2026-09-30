@@ -248,7 +248,9 @@ export const NormalUserDashboard: React.FC = () => {
                         {req.title}
                       </h3>
                       <div className="text-xs text-amber-300 mt-0.5">
-                        📍 {req.location.region}, {req.location.state}
+                        📍 {typeof req.location === 'object' && req.location !== null
+                          ? `${(req.location as any).region || ''}, ${(req.location as any).state || ''}`
+                          : String(req.location || 'Local Region')}
                       </div>
                     </div>
 

@@ -51,7 +51,6 @@ interface GeospatialHotspotMapProps {
   onOpenDuplicateInspector?: () => void;
   onOpenIndiaHierarchy?: () => void;
   onOpenCrisisSimulation?: () => void;
-  onOpenJudgesGuide?: () => void;
 }
 
 export const GeospatialHotspotMap: React.FC<GeospatialHotspotMapProps> = ({
@@ -66,7 +65,6 @@ export const GeospatialHotspotMap: React.FC<GeospatialHotspotMapProps> = ({
   onOpenDuplicateInspector,
   onOpenIndiaHierarchy,
   onOpenCrisisSimulation,
-  onOpenJudgesGuide,
 }) => {
   const { 
     t, 
@@ -109,18 +107,18 @@ export const GeospatialHotspotMap: React.FC<GeospatialHotspotMapProps> = ({
           id: region.id,
           geometry: {
             type: "Point",
-            coordinates: [region.coordinates.lng, region.coordinates.lat]
+            coordinates: [region.coordinates?.lng ?? region.lng, region.coordinates?.lat ?? region.lat]
           },
           properties: {
             name: region.name,
             nativeName: region.nativeName,
-            countryId: region.countryId,
+            countryId: region.countryId || region.country,
             population: region.population,
             vulnerabilityIndex: region.vulnerabilityIndex,
-            topPrioritySector: region.topPrioritySector,
+            topPrioritySector: region.topPrioritySector || region.topSector,
             deficitBudgetM: region.deficitBudgetM,
-            activeRequestsCount: region.activeRequestsCount,
-            riskAlert: region.riskAlert
+            activeRequestsCount: region.activeRequestsCount || region.activeReports,
+            riskAlert: (region as any).riskAlert
           }
         })),
         ...hotspots.map((hotspot) => ({
@@ -128,12 +126,12 @@ export const GeospatialHotspotMap: React.FC<GeospatialHotspotMapProps> = ({
           id: hotspot.id,
           geometry: {
             type: "Point",
-            coordinates: [hotspot.coordinates?.lng || 0, hotspot.coordinates?.lat || 0]
+            coordinates: [hotspot.coordinates?.lng ?? hotspot.lng, hotspot.coordinates?.lat ?? hotspot.lat]
           },
           properties: {
-            title: hotspot.title,
+            title: (hotspot as any).title || hotspot.regionName,
             sector: hotspot.sector,
-            priorityScore: hotspot.priorityScore || 85,
+            priorityScore: (hotspot as any).priorityScore || hotspot.priorityIndex,
             estimatedBudgetM: hotspot.estimatedBudgetM,
             estimatedBeneficiaries: hotspot.estimatedBeneficiaries,
             severity: hotspot.severity || "High"
@@ -175,15 +173,15 @@ export const GeospatialHotspotMap: React.FC<GeospatialHotspotMapProps> = ({
     const rows = REGIONS_DATA.map((r) => [
       `"${r.id}"`,
       `"${r.name}"`,
-      `"${r.countryId.toUpperCase()}"`,
-      r.coordinates.lat,
-      r.coordinates.lng,
+      `"${(r.countryId || r.country || '').toUpperCase()}"`,
+      r.coordinates?.lat ?? r.lat,
+      r.coordinates?.lng ?? r.lng,
       r.population,
       r.vulnerabilityIndex,
-      `"${r.topPrioritySector}"`,
+      `"${r.topPrioritySector || r.topSector}"`,
       r.deficitBudgetM,
-      r.activeRequestsCount,
-      `"${(r.riskAlert || '').replace(/"/g, '""')}"`
+      r.activeRequestsCount || r.activeReports,
+      `"${((r as any).riskAlert || '').replace(/"/g, '""')}"`
     ]);
 
     const csvContent = [headers.join(","), ...rows.map(r => r.join(","))].join("\n");
@@ -422,16 +420,6 @@ export const GeospatialHotspotMap: React.FC<GeospatialHotspotMapProps> = ({
             <Sparkles className="w-3.5 h-3.5 text-cyan-400 animate-pulse" />
             Sovereign DPI Suite:
           </span>
-
-          {onOpenJudgesGuide && (
-            <button
-              onClick={onOpenJudgesGuide}
-              className="px-3 py-1.5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-slate-950 font-bold text-xs flex items-center gap-1.5 transition shadow-lg cursor-pointer"
-            >
-              <Award className="w-3.5 h-3.5" />
-              <span>🏆 Hackathon Guide</span>
-            </button>
-          )}
 
           {onOpenWhatsAppBot && (
             <button

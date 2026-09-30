@@ -25,7 +25,6 @@ import { MinisterialPolicyDebate } from './components/MinisterialPolicyDebate';
 import { DuplicateClusterVisualizer } from './components/DuplicateClusterVisualizer';
 import { IndiaDistrictHierarchy } from './components/IndiaDistrictHierarchy';
 import { CrisisSimulationModal } from './components/CrisisSimulationModal';
-import { JudgesDemoGuideModal } from './components/JudgesDemoGuideModal';
 
 import { BRICSCountryId, CitizenReport, DemandHotspot, RegionData, UserRole } from './types';
 import { INITIAL_CITIZEN_REPORTS, DEMAND_HOTSPOTS, REGIONS_DATA } from './data/bricsData';
@@ -60,7 +59,6 @@ function MainAppContent() {
   const [isDuplicateInspectorOpen, setIsDuplicateInspectorOpen] = useState<boolean>(false);
   const [isIndiaHierarchyOpen, setIsIndiaHierarchyOpen] = useState<boolean>(false);
   const [isCrisisSimulationOpen, setIsCrisisSimulationOpen] = useState<boolean>(false);
-  const [isJudgesGuideOpen, setIsJudgesGuideOpen] = useState<boolean>(false);
 
   // Stats calculation
   const totalBeneficiariesNum = hotspots.reduce((acc, h) => acc + h.estimatedBeneficiaries, 0);
@@ -129,7 +127,6 @@ function MainAppContent() {
           onOpenDuplicateInspector={() => setIsDuplicateInspectorOpen(true)}
           onOpenIndiaHierarchy={() => setIsIndiaHierarchyOpen(true)}
           onOpenCrisisSimulation={() => setIsCrisisSimulationOpen(true)}
-          onOpenJudgesGuide={() => setIsJudgesGuideOpen(true)}
           hotspotsCount={hotspots.length}
           criticalAlertsCount={4}
         />
@@ -171,10 +168,6 @@ function MainAppContent() {
                 setIsMobileSidebarOpen(false);
                 setIsCrisisSimulationOpen(true);
               }}
-              onOpenJudgesGuide={() => {
-                setIsMobileSidebarOpen(false);
-                setIsJudgesGuideOpen(true);
-              }}
               hotspotsCount={hotspots.length}
               criticalAlertsCount={4}
             />
@@ -203,7 +196,7 @@ function MainAppContent() {
         />
 
         {/* Dynamic Main Viewport */}
-        <main className="flex-1 w-full max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-5 sm:py-7">
+        <main className="flex-1 w-full max-w-[1680px] mx-auto px-3 sm:px-6 lg:px-8 py-5 sm:py-6">
           
           {/* VIEW 0: DEDICATED RAISE COMPLAINT PAGE */}
           {activeTab === 'raise-complaint' && (
@@ -266,7 +259,6 @@ function MainAppContent() {
               onOpenDuplicateInspector={() => setIsDuplicateInspectorOpen(true)}
               onOpenIndiaHierarchy={() => setIsIndiaHierarchyOpen(true)}
               onOpenCrisisSimulation={() => setIsCrisisSimulationOpen(true)}
-              onOpenJudgesGuide={() => setIsJudgesGuideOpen(true)}
             />
           )}
 
@@ -419,40 +411,6 @@ function MainAppContent() {
           }}
           onNavigateToDPRStudio={(title, budgetM, sector) => {
             setIsCrisisSimulationOpen(false);
-            handleTabSelect('dpr-studio');
-          }}
-        />
-
-        {/* 6. Hackathon Evaluators Tour Guide Modal */}
-        <JudgesDemoGuideModal
-          isOpen={isJudgesGuideOpen}
-          onClose={() => setIsJudgesGuideOpen(false)}
-          onLaunchWhatsAppBot={() => {
-            setIsJudgesGuideOpen(false);
-            setIsWhatsAppBotOpen(true);
-          }}
-          onLaunchPolicyDebate={() => {
-            setIsJudgesGuideOpen(false);
-            setIsPolicyDebateOpen(true);
-          }}
-          onLaunchDuplicateInspector={() => {
-            setIsJudgesGuideOpen(false);
-            setIsDuplicateInspectorOpen(true);
-          }}
-          onLaunchIndiaHierarchy={() => {
-            setIsJudgesGuideOpen(false);
-            setIsIndiaHierarchyOpen(true);
-          }}
-          onLaunchCrisisSimulation={() => {
-            setIsJudgesGuideOpen(false);
-            setIsCrisisSimulationOpen(true);
-          }}
-          onNavigateToMap={() => {
-            setIsJudgesGuideOpen(false);
-            handleTabSelect('map');
-          }}
-          onNavigateToDPRStudio={() => {
-            setIsJudgesGuideOpen(false);
             handleTabSelect('dpr-studio');
           }}
         />

@@ -95,8 +95,10 @@ export const GeospatialMapCanvas: React.FC<GeospatialMapCanvasProps> = ({
   // Filtered regions to render on canvas
   const visibleRegions = useMemo(() => {
     return REGIONS_DATA.filter((r) => {
-      if (selectedCountry !== 'all' && r.countryId !== selectedCountry) return false;
-      if (selectedSector !== 'all' && r.topPrioritySector !== selectedSector) return false;
+      const cId = r.countryId || r.country;
+      const sector = r.topPrioritySector || r.topSector;
+      if (selectedCountry !== 'all' && cId !== selectedCountry) return false;
+      if (selectedSector !== 'all' && sector !== selectedSector) return false;
       return true;
     });
   }, [selectedCountry, selectedSector]);
@@ -399,7 +401,9 @@ export const GeospatialMapCanvas: React.FC<GeospatialMapCanvasProps> = ({
           {showJalJeevan && (
             <g opacity="0.8">
               {visibleRegions.map((region) => {
-                const coords = projectCoordinates(region.coordinates.lat, region.coordinates.lng, region.countryId);
+                const rLat = region.coordinates?.lat ?? region.lat;
+                const rLng = region.coordinates?.lng ?? region.lng;
+                const coords = projectCoordinates(rLat, rLng, (region.country || region.countryId) as BRICSCountryId);
                 return (
                   <g key={`jjm-${region.id}`}>
                     <circle
@@ -463,7 +467,9 @@ export const GeospatialMapCanvas: React.FC<GeospatialMapCanvasProps> = ({
           {/* Contamination Buffer Radii (Arsenic, Fluoride, Salinity) */}
           {showContamination && visibleRegions.map((region) => {
             if (region.vulnerabilityIndex < 65) return null;
-            const coords = projectCoordinates(region.coordinates.lat, region.coordinates.lng, region.countryId);
+            const rLat = region.coordinates?.lat ?? region.lat;
+            const rLng = region.coordinates?.lng ?? region.lng;
+            const coords = projectCoordinates(rLat, rLng, (region.country || region.countryId) as BRICSCountryId);
             const radius = Math.min(45, Math.max(16, region.vulnerabilityIndex * 0.45));
 
             return (
@@ -492,10 +498,12 @@ export const GeospatialMapCanvas: React.FC<GeospatialMapCanvasProps> = ({
 
           {/* Regional Geo Nodes & Sector Pins */}
           {visibleRegions.map((region) => {
-            const coords = projectCoordinates(region.coordinates.lat, region.coordinates.lng, region.countryId);
+            const rLat = region.coordinates?.lat ?? region.lat;
+            const rLng = region.coordinates?.lng ?? region.lng;
+            const coords = projectCoordinates(rLat, rLng, (region.country || region.countryId) as BRICSCountryId);
             const isSelected = region.id === selectedRegionId;
             const isHovered = hoveredRegion?.id === region.id;
-            const sectorColor = getSectorColor(region.topPrioritySector);
+            const sectorColor = getSectorColor((region.topPrioritySector || region.topSector) as InfrastructureSector);
             const vulnColor = getVulnerabilityColor(region.vulnerabilityIndex);
 
             return (
@@ -608,7 +616,7 @@ export const GeospatialMapCanvas: React.FC<GeospatialMapCanvasProps> = ({
             <div className="grid grid-cols-2 gap-1.5 text-[10px] text-slate-400 pt-1 border-t border-slate-800">
               <div>
                 <span>{t.sector || 'Sector'}:</span>
-                <div className="font-semibold text-white truncate">{tSector(hoveredRegion.topPrioritySector)}</div>
+                <div className="font-semibold text-white truncate">{tSector(hoveredRegion.topPrioritySector || hoveredRegion.topSector || '')}</div>
               </div>
               <div>
                 <span>{t.deficitBudget || 'Deficit CapEx'}:</span>

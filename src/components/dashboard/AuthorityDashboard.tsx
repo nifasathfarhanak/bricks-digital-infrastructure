@@ -750,7 +750,11 @@ export const AuthorityDashboard: React.FC<AuthorityDashboardProps> = ({ onOpenDP
             <div className="space-y-3 text-xs">
               <div className="bg-[#0A192F] p-3 rounded-xl border border-[#334155] space-y-1">
                 <div className="font-bold text-white">{actionRequest.title}</div>
-                <div className="text-[#94A3B8]">Region: {actionRequest.location.region}, {actionRequest.location.state}</div>
+                <div className="text-[#94A3B8]">
+                  Region: {typeof actionRequest.location === 'object' && actionRequest.location !== null
+                    ? `${(actionRequest.location as any).region || ''}, ${(actionRequest.location as any).state || ''}`
+                    : String(actionRequest.location || 'Local District')}
+                </div>
                 <div className="text-amber-300">Submitted by: {actionRequest.username} ({actionRequest.userMobile})</div>
               </div>
 
